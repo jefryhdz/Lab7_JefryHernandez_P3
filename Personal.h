@@ -7,12 +7,12 @@ using namespace std;
 
 #ifndef PERSONAL_H
 #define PERSONAL_H
-class Personal : Usuario{
+class Personal :public Usuario{
 	protected:
 		double Sueldo;
 		string contratacion;
 	public:
-		Personal(double,string);
+		Personal(int,int,string,string,string,string,double,string);
 		Personal();
 		double getSueldo();
 		void setSueldo(double);

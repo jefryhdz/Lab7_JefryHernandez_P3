@@ -7,11 +7,11 @@ using namespace std;
 
 #ifndef CHEF_H
 #define CHEF_H
-class Chef : Personal{
+class Chef :public Personal{
 	protected:
 		string favorito;
 	public:
-		Chef(string);
+		Chef(int,int,string,string,string,string,double,string,string);
 		Chef();
 		string getFavorito();
 		void setFavorito(string);

@@ -7,14 +7,17 @@ using namespace std;
 
 #ifndef MESERO_H
 #define MESERO_H
-class Mesero : Personal{
+class Mesero :public Personal{
 	protected:
-		string platillos;
+		vector<string> platillos;
 	public:
-		Mesero(string);
+		Mesero(int,int,string,string,string,string,double,string,vector<string>);
 		Mesero();
-		string getPlatillos();
-		void setPlatillos(string);
+		vector<string> getPlatillos();
+		void setPlatillos(vector<string>);
+		void Agregarplatillo(string);
+		void Eliminaruno(int);
+		void Eliminartodo();
 
 };
 #endif

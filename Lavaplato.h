@@ -7,11 +7,11 @@ using namespace std;
 
 #ifndef LAVAPLATO_H
 #define LAVAPLATO_H
-class Lavaplato : Personal{
+class Lavaplato :public Personal{
 	protected:
 		double Motivacion;
 	public:
-		Lavaplato(double);
+		Lavaplato(int,int,string,string,string,string,double,string,double);
 		Lavaplato();
 		double getMotivacion();
 		void setMotivacion(double);
