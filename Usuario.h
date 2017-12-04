@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 using namespace std;
+
 
 #ifndef USUARIO_H
 #define USUARIO_H
@@ -36,6 +38,7 @@ class Usuario{
 		void setPassword(string);
 
 		virtual~Usuario();
+		virtual string toString();
 
 };
 #endif

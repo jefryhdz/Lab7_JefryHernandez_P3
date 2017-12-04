@@ -20,6 +20,8 @@ class Administrador :public Personal{
 
 		int getContratados();
 		void setContratados(int);
+		string toString();
+		~Administrador();
 
 };
 #endif

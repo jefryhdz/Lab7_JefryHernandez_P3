@@ -27,3 +27,29 @@ void Mesero::Eliminartodo(){
 		platillos.erase(platillos.begin()+i);
 	}
 }
+string Mesero::toString(){
+	ostringstream os;
+	string archivo;
+	char ar='M';
+	archivo+=ar;
+	os<<edad;
+	archivo+=os.str();
+	archivo+=",";
+	os<<telefono;
+	archivo+=os.str();
+	archivo+=",";
+	archivo+=nombre;
+	archivo+=",";
+	archivo+=ID;
+	archivo+=",";
+	archivo+=username;
+	archivo+=",";
+	archivo+=password;
+	archivo+=",";
+	os<<Sueldo;
+	archivo+=os.str();
+	archivo+=",";
+	archivo+=contratacion;
+	archivo+=";";
+	return archivo;
+}Mesero::~Mesero(){}

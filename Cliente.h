@@ -19,6 +19,7 @@ class Cliente :public Usuario{
 
 		double getRating();
 		void setRating(double);
-
+		string toString();
+		~Cliente();
 };
 #endif

@@ -18,3 +18,32 @@ void Cliente::setRating(double rating){
 double Cliente::getRating(){
    return rating;
 }
+Cliente::~Cliente(){
+}
+string Cliente::toString(){
+	ostringstream os;
+	string archivo;
+	char ar ='C';
+	archivo+=ar;
+	archivo+=",";
+	os<<edad;
+	archivo+=os.str();
+	archivo+=",";
+	os<<telefono;
+	archivo+=os.str();
+	archivo+=",";
+	archivo+=nombre;
+	archivo+=",";
+	archivo+=ID;
+	archivo+=",";
+	archivo+=username;
+	archivo+=",";
+	archivo+=password;
+	archivo+=",";
+	archivo+=Direccion;
+	archivo+=",";
+	os<<rating;
+	archivo+=os.str();
+	archivo+=";";
+	return archivo;
+}

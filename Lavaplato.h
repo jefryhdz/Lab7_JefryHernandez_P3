@@ -15,6 +15,7 @@ class Lavaplato :public Personal{
 		Lavaplato();
 		double getMotivacion();
 		void setMotivacion(double);
-
+		string toString();
+		~Lavaplato();
 };
 #endif

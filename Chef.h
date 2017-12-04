@@ -15,6 +15,8 @@ class Chef :public Personal{
 		Chef();
 		string getFavorito();
 		void setFavorito(string);
+		string toString();
+		~Chef();
 
 };
 #endif

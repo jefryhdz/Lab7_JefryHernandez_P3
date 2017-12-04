@@ -19,6 +19,7 @@ class Personal :public Usuario{
 
 		string getContratacion();
 		void setContratacion(string);
-
+		~Personal();
+		string toString();
 };
 #endif

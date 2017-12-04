@@ -50,4 +50,6 @@ string Usuario::getPassword(){
 }
 Usuario::~Usuario(){
 }
-
+string Usuario::toString(){
+	return "";
+}

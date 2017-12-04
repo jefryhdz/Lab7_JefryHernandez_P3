@@ -18,6 +18,7 @@ class Mesero :public Personal{
 		void Agregarplatillo(string);
 		void Eliminaruno(int);
 		void Eliminartodo();
-
+		string toString();
+		~Mesero();
 };
 #endif

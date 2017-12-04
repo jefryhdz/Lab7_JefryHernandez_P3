@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 #include "Usuario.h"
 #include "Cliente.h"
 #include "Personal.h"
@@ -8,6 +9,8 @@
 #include "Chef.h"
 #include "Lavaplato.h"
 #include "Mesero.h"
+#include <stdlib.h>
+#include <cstdlib>
 
 using namespace std;
 
@@ -15,8 +18,10 @@ vector<Usuario*> menuadmin(vector<Usuario*>,Usuario*);
 vector<Usuario*> Crearcliente(vector<Usuario*>);
 Usuario* Crearempleado(vector<Usuario*>);
 vector<Usuario*> menuchef(vector<Usuario*>);
-vector<Usuario*> menulavaplatos(vector<Usuario*>,Usuario*);
+vector<Usuario*>  menulavaplatos(vector<Usuario*>,Usuario*);
 vector<Usuario*> menumesero(vector<Usuario*>,Usuario*);
+vector<Usuario*> leer();
+void escribir(vector<Usuario*>);
 
 Usuario* Crearempleado();
 
@@ -65,26 +70,29 @@ int main(){
                 admin=dynamic_cast<Administrador*>(usuario);
 								lista= menuadmin(lista,admin);
             }
-            if (dynamic_cast<Chef*>(usuario)!=NULL)
+            else if (dynamic_cast<Chef*>(usuario)!=NULL)
             {
-                chef = dynamic_cast<Chef*>(usuario);
-            }if (dynamic_cast<Lavaplato*>(usuario)!=NULL)
+              chef = dynamic_cast<Chef*>(usuario);
+						  lista=menuchef(lista);
+            }else if (dynamic_cast<Lavaplato*>(usuario)!=NULL)
             {
-                lava=dynamic_cast<Lavaplato*>(usuario);
-            }if (dynamic_cast<Mesero*>(usuario)!=NULL)
+              lava=dynamic_cast<Lavaplato*>(usuario);
+							lista=menulavaplatos(lista,lava);
+            }else if (dynamic_cast<Mesero*>(usuario)!=NULL)
             {
                 mesero=dynamic_cast<Mesero*>(usuario);
-            }if (dynamic_cast<Cliente*>(usuario)!=NULL)
+                lista= menumesero(lista,mesero);
+            }else if (dynamic_cast<Cliente*>(usuario)!=NULL)
             {
                 cliente= dynamic_cast<Cliente*>(usuario);
             }
 
         }
-           cout<<"Desea continuar en el programa [s/n] ";
+           cout<<"Desea continuar en el programa [s/n] "<<endl;
            cin>>ans;
     } while (ans=='S'||ans=='s');
-
-       return 0;
+    escribir(lista);
+     return 0;
 }
 
 int menu(){
@@ -166,8 +174,11 @@ vector<Usuario*> menuadmin(vector<Usuario*> lista,Usuario* usuario){
         if (resp==1)
         {
           Usuario* usuario= Crearempleado(lista);
+
 					lista.push_back(usuario);
-					for (int i = 0; i < lista.size(); i++) {
+					cout<<""<<usuario->getNombre()<<endl;
+
+					for (int i = 0; i < lista.size()-1; i++) {
 						if (dynamic_cast<Personal*>(lista.at(i))) {
 							Personal* user=dynamic_cast<Personal*>(lista.at(i));
 							if ((user->getID()==usuario->getID())&&(user->getPassword()==usuario->getPassword()))
@@ -177,6 +188,7 @@ vector<Usuario*> menuadmin(vector<Usuario*> lista,Usuario* usuario){
 							}
 						}
 					}
+					cout<<""<<lista.size()<<endl;
         }
         if (resp==2)
         {
@@ -233,8 +245,13 @@ vector<Usuario*> menuadmin(vector<Usuario*> lista,Usuario* usuario){
 					int meseroposicion;
 					string plato;
 					for (int i = 0; i < lista.size(); i++) {
-						if (dynamic_cast<Mesero*>(lista.at(i))) {
-							cout<<i<<". "<<lista.at(i)->getNombre()<<endl;
+						if (dynamic_cast<Personal*>(lista.at(i))) {
+								Personal* personal = dynamic_cast<Personal*>(lista.at(i));
+								if (dynamic_cast<Mesero*>(personal)) {
+										cout<<i<<". "<<lista.at(i)->getNombre()<<endl;
+								}
+						}else{
+
 						}
 					}cout<<"Seleccione el numero del mesero"<<endl;
 					cin>>meseroposicion;
@@ -242,17 +259,16 @@ vector<Usuario*> menuadmin(vector<Usuario*> lista,Usuario* usuario){
 					cin>>plato;
 					for (int i = 0; i < lista.size(); i++) {
 						if (i==meseroposicion) {
-							Mesero* mesero = dynamic_cast<Mesero*>(lista.at(i));
-							mesero->getPlatillos().push_back(plato);
-							lista.erase(lista.begin()+i);
-							lista.push_back(mesero);
-						}
-        	}
-        }if (resp==5)
-        {
-					double mayor,temp=0;
-					vector<Personal*>mayores;
-					Personal* may;
+							dynamic_cast<Mesero*>(lista.at(i))->getPlatillos().push_back(plato);
+							/*mesero->getPlatillos().push_back(plato);
+              cout<<mesero->getPlatillos().at(0);*/
+					  }
+          }
+        }
+        if (resp==5) {
+          vector<Personal*>mayores;
+  				Personal* may;
+          double mayor,temp=0;
 					for (int i = 0; i < lista.size(); i++) {
 						if (dynamic_cast<Personal*>(lista.at(i))) {
 							Personal* personal= dynamic_cast<Personal*>(lista.at(i));
@@ -288,32 +304,44 @@ vector<Usuario*> menuadmin(vector<Usuario*> lista,Usuario* usuario){
 					cout<<"El promedio es "<<promedio;
         }
     } while (resp!=7);
-		return lista;
+    return lista;
 }
 
 vector<Usuario*> menulavaplatos(vector<Usuario*> lista ,Usuario* usuario){
-	int ans;
+	int ans,aumento, posicion;;
+	Personal* personal= dynamic_cast<Personal*>(usuario);
+	Lavaplato* lavaplato=dynamic_cast<Lavaplato*>(personal);
 	do {
 		cout<<"Menu lavaplato"<<endl;
 		cout<<"1. Renunciar"<<endl;
 		cout<<"2. Pedir aumento"<<endl;
 		cin>>ans;
 	} while(ans<1&&ans>2);
+  for (int i = 0; i < lista.size(); i++) {
+    if ((usuario->getUsername()==lista.at(i)->getUsername())&&(usuario->getPassword()==lista.at(i)->getPassword())) {
+      posicion=i;
+    }
+  }
 	if (ans==1) {
-		Personal* personal= dynamic_cast<Personal*>(usuario);
-		Lavaplato* lavaplato=dynamic_cast<Lavaplato*>(personal);
 		if (lavaplato->getSueldo()<=25) {
-			int posicion;
-			for (int i = 0; i < lista.size(); i++) {
-				if ((usuario->getUsername()==lista.at(i)->getUsername())&&(usuario->getPassword()==lista.at(i)->getPassword())) {
-					posicion=i;
-				}
-			}lista.erase(lista.begin()+posicion);
+			lista.erase(lista.begin()+posicion);
+		}else{
+			cout<<"No puede renunciar"<<endl;
 		}
 	}if (ans==2) {
-		cout<<"No puede renunciar"<<endl;
+		if (lavaplato->getMotivacion()>=100) {
+			bool verificar=false;
+			do {
+				cout<<"Ingrese la cantidad a aumentar"<<endl;
+				cin>>aumento;
+				if (aumento<=lavaplato->getSueldo()) {
+					verificar=true;
+				}
+			} while(!verificar);
+			dynamic_cast<Lavaplato*>(lista.at(posicion))->setSueldo(dynamic_cast<Lavaplato*>(lista.at(posicion))->getSueldo()+aumento);
+		}
 	}
-	return lista;
+  return lista;
 }
 
 Usuario* Crearempleado(vector<Usuario*> lista){
@@ -374,14 +402,17 @@ Usuario* Crearempleado(vector<Usuario*> lista){
 		if (resp==1)
     {
         usuario = new Administrador(edad,telefono,nombre,ID,username,password,sueldo,contratacion,0,0);
-    }else if (resp==2) {
+    }if (resp==2) {
 				string plato;
 				cout<<"Ingrese su plato favorito"<<endl;
 				cin>>plato;
+				cout<<"sd"<<endl;
 				usuario = new Chef(edad,telefono,nombre,ID,username,password,sueldo,contratacion,plato);
-    }else if (resp==3) {
+			//7int,int,string,string,string,string,double,string,string
+    }if (resp==4) {
     		usuario = new Lavaplato(edad,telefono,nombre,ID,username,password,sueldo,contratacion,50);
-    }else if (resp==4) {
+
+    }if (resp==3) {
     		vector<string>platillos;
 				usuario= new Mesero(edad,telefono,nombre,ID,username,password,sueldo,contratacion,platillos);
     }
@@ -416,9 +447,7 @@ vector<Usuario*> menuchef(vector<Usuario*> lista){
 		if (desmotivacion>0) {
 			desmotivacion*=-1;
 		}
-		lava->setMotivacion(lava->getMotivacion()+desmotivacion);
-		lista.erase(lista.begin()+opcion);
-		lista.push_back(lava);
+    dynamic_cast<Lavaplato*>(lista.at(opcion))->setMotivacion(dynamic_cast<Lavaplato*>(lista.at(opcion))->getMotivacion()+desmotivacion);
 	}if (ans==2) {
 		int motivacion;
 		cout<<"Ingrese el numero del motivacion"<<endl;
@@ -426,31 +455,156 @@ vector<Usuario*> menuchef(vector<Usuario*> lista){
 		if (motivacion<0) {
 			motivacion=motivacion*-1;
 		}
-		Usuario* useri= lista.at(opcion);
-		Personal* pers = dynamic_cast<Personal*>(useri);
-		Lavaplato* lava =dynamic_cast<Lavaplato*>(pers);
-		lava->setMotivacion(lava->getMotivacion()+motivacion);
-		lista.erase(lista.begin()+opcion);
-		lista.push_back(lava);
+    dynamic_cast<Lavaplato*>(lista.at(opcion))->setMotivacion(dynamic_cast<Lavaplato*>(lista.at(opcion))->getMotivacion()+motivacion);
 	}
-	return lista;
+  return lista;
 }
 vector<Usuario*> menumesero(vector<Usuario*>lista,Usuario* usuario){
-	int posicion;
-	vector<string>platillos;
-	Personal* pers = dynamic_cast<Personal*>(usuario);
-	Mesero* mesero =dynamic_cast<Mesero*>(pers);
-	for (int i = 0; i < lista.size(); i++) {
-		if ((lista.at(i)->getUsername()==usuario->getUsername())&&(lista.at(i)->getPassword()==usuario->getPassword())) {
-			posicion=i;
-			Personal* pers = dynamic_cast<Personal*>(lista.at(i));
-			Mesero* waiter=  dynamic_cast<Mesero*>(pers);
-			platillos=waiter->getPlatillos();
-		}
-	}cout<<"Escoja el plato a entregar"<<endl;
-	int plato;
-	for (int i = 0; i < platillos.size(); i++) {
-		cout<<i<<". "<<platillos.at(i)<<endl;
-	}cin>>plato;
+  int resp,posicion;
+  do {
+    cout<<"1. Entregar un plato"<<endl;
+    cout<<"2. Entregarlos todos"<<endl;
+    cin>>resp;
+  } while(resp<1&&resp>2);
+  for (int i = 0; i < lista.size(); i++) {
+    if ((lista.at(i)->getUsername()==usuario->getUsername())&&(lista.at(i)->getPassword()==usuario->getPassword())) {
+      posicion=i;
+    }
+  }
+	if (resp==1) {
+    int posicion;
+  	vector<string>platillos;
+  	Personal* pers = dynamic_cast<Personal*>(usuario);
+  	Mesero* mesero =dynamic_cast<Mesero*>(pers);
+    Mesero* waiter;
+  	platillos=(dynamic_cast<Mesero*>(lista.at(posicion)))->getPlatillos();
+  cout<<"Escoja el plato a entregar"<<endl;
+  	int plato;
+  	for (int i = 0; i < platillos.size(); i++) {
+  		cout<<i<<". "<<platillos.at(i)<<endl;
+  	}cin>>plato;
+    dynamic_cast<Mesero*>(lista.at(posicion))->Eliminaruno(plato);
 
+	}else if (resp==2) {
+    dynamic_cast<Mesero*>(lista.at(posicion))->Eliminartodo();
+	}
+  return lista;
+}
+void escribir(vector<Usuario*>lista){
+  ofstream archivo("Usuario.txt");
+  if (archivo.is_open()) {
+    for (int i = 0; i < lista.size(); i++) {
+      archivo<<lista.at(i)->toString();
+    }
+  }
+  archivo.close();
+}
+vector<Usuario*> leer(){
+  vector<Usuario*> lista;
+  fstream archivo("Usuario.txt");
+  if (archivo.is_open()) {
+  while(!archivo.eof()){
+    string emp,edad,telefono,nombre, ID, username, password, contratacion,sueldo;
+    double Sueldo;
+    int eda,telefon;
+    double salario;
+    //int edad,int telefono,string nombre,string ID,string username,string password,double Sueldo,string contratacion,int Despedidos,int Contratados
+    getline(archivo,emp,',');
+    if (emp == "A") {
+      int contratado, despedido;
+      string contrata,despesdi;
+      getline(archivo,edad,',');
+      eda = atoi(edad.c_str());
+      getline(archivo,telefono,',');
+      telefon= atoi(telefono.c_str());
+      getline(archivo,nombre,',');
+      getline(archivo,ID,',');
+      getline(archivo,username,',');
+      getline(archivo,password,',');
+      getline(archivo,sueldo,',');
+      Sueldo = atoi(sueldo.c_str());
+      getline(archivo,contratacion,',');
+      getline(archivo,contrata,',');
+      contratado = atoi(contrata.c_str());
+      getline(archivo,despesdi,';');
+      despedido= atoi(despesdi.c_str());
+      lista.push_back(new Administrador(eda,telefon,nombre,ID,username,password,Sueldo,contratacion,despedido,contratado));
+    }
+
+    if (emp == "H") {
+      //(int edad,int telefono,string nombre,string ID,string username,string password,double Sueldo,string contratacion,string favorito
+      string plato;
+      getline(archivo,edad,',');
+      eda = atoi(edad.c_str());
+      getline(archivo,telefono,',');
+      telefon= atoi(telefono.c_str());
+      getline(archivo,nombre,',');
+      getline(archivo,ID,',');
+      getline(archivo,username,',');
+      getline(archivo,password,',');
+      getline(archivo,sueldo,',');
+      Sueldo = atoi(sueldo.c_str());
+      getline(archivo,plato,';');
+      lista.push_back(new Chef(eda,telefon,nombre,ID,username,password,Sueldo,contratacion,plato));
+    }
+
+
+    if (emp == "C") {
+      //int edad,int telefono,string nombre,string ID,string username,string password,string Direccion,double rating
+      string direccion,ranking;
+      int rating;
+      getline(archivo,edad,',');
+      eda = atoi(edad.c_str());
+      getline(archivo,telefono,',');
+      telefon= atoi(telefono.c_str());
+      getline(archivo,nombre,',');
+      getline(archivo,ID,',');
+      getline(archivo,username,',');
+      getline(archivo,password,',');
+      getline(archivo,direccion,',');
+      getline(archivo,ranking,';');
+      rating = atoi(ranking.c_str());
+      lista.push_back(new Cliente(eda,telefon,nombre,ID,username,password,direccion,rating));
+    }
+
+    if (emp == "M") {
+      //int edad,int telefono,string nombre,string ID,string username,string password,double Sueldo,string contratacion
+      getline(archivo,edad,',');
+      eda = atoi(edad.c_str());
+      getline(archivo,telefono,',');
+      telefon= atoi(telefono.c_str());
+      getline(archivo,nombre,',');
+      getline(archivo,ID,',');
+      getline(archivo,username,',');
+      getline(archivo,password,',');
+      getline(archivo,sueldo,',');
+      Sueldo = atoi(sueldo.c_str());
+      vector<string>platos;
+      lista.push_back(new Mesero(eda,telefon,nombre,ID,username,password,Sueldo,contratacion,platos));
+    }
+
+    if (emp == "L") {
+      //int edad,int telefono,string nombre,string ID,string username,string password,double Sueldo,string contratacion,double Motivacion
+      string motiv;
+      double motivacion;
+      getline(archivo,edad,',');
+      eda = atoi(edad.c_str());
+      getline(archivo,telefono,',');
+      telefon= atoi(telefono.c_str());
+      getline(archivo,nombre,',');
+      getline(archivo,ID,',');
+      getline(archivo,username,',');
+      getline(archivo,password,',');
+      getline(archivo,sueldo,',');
+      Sueldo = atoi(sueldo.c_str());
+      getline(archivo,motiv,';');
+      motivacion = atoi(motiv.c_str());
+      lista.push_back(new Lavaplato(eda,telefon,nombre,ID,username,password,Sueldo,contratacion,motivacion));
+    }
+  }
+
+    archivo.close();
+    return lista;
+
+  }
 }

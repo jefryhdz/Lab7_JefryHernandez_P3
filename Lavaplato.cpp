@@ -11,3 +11,33 @@ Lavaplato::Lavaplato(){
 double Lavaplato::getMotivacion(){
    return Motivacion;
 }
+string Lavaplato::toString(){
+	ostringstream os;
+	string archivo;
+	char ar='L';
+	archivo+=ar;
+	os<<edad;
+	archivo+=os.str();
+	archivo+=",";
+	os<<telefono;
+	archivo+=os.str();
+	archivo+=",";
+	archivo+=nombre;
+	archivo+=",";
+	archivo+=ID;
+	archivo+=",";
+	archivo+=username;
+	archivo+=",";
+	archivo+=password;
+	archivo+=",";
+	os<<Sueldo;
+	archivo+=os.str();
+	archivo+=",";
+	archivo+=contratacion;
+	archivo+=",";
+	os<<Motivacion;
+	archivo+=os.str();
+	archivo+=";";
+	return archivo;
+}
+Lavaplato::~Lavaplato(){}
