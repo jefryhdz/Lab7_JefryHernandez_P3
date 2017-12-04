@@ -9,7 +9,6 @@
 #include "Chef.h"
 #include "Lavaplato.h"
 #include "Mesero.h"
-#include <stdlib.h>
 #include <cstdlib>
 
 using namespace std;
@@ -21,7 +20,7 @@ vector<Usuario*> menuchef(vector<Usuario*>);
 vector<Usuario*>  menulavaplatos(vector<Usuario*>,Usuario*);
 vector<Usuario*> menumesero(vector<Usuario*>,Usuario*);
 vector<Usuario*> leer();
-void escribir(vector<Usuario*>);
+void escribir(Usuario*);
 
 Usuario* Crearempleado();
 
@@ -91,7 +90,10 @@ int main(){
            cout<<"Desea continuar en el programa [s/n] "<<endl;
            cin>>ans;
     } while (ans=='S'||ans=='s');
-    escribir(lista);
+  //))&&  escribir(lista);
+    for (size_t i = 0; i < lista.size(); i++) {
+      delete lista.at(i);
+    }
      return 0;
 }
 
@@ -416,27 +418,44 @@ Usuario* Crearempleado(vector<Usuario*> lista){
     		vector<string>platillos;
 				usuario= new Mesero(edad,telefono,nombre,ID,username,password,sueldo,contratacion,platillos);
     }
+    escribir(usuario);
 		return usuario;
 }
 vector<Usuario*> menuchef(vector<Usuario*> lista){
 	int ans=0;
-	do {
-		cout<<"1. Gritarle a un lavaplato "<<endl;
-		cout<<"2. Motivar a un lavaplato"<<endl;
-		cin>>ans;
-	} while(ans<1&&ans>2);
+
 	int opcion;
-	cout<<"Escoja el lavaplato"<<endl;
+  int cont=0;
 	for (int i = 0; i < lista.size(); i++) {
-		Usuario* usuario= lista.at(i);
-		if (dynamic_cast<Personal*>(usuario)!=NULL) {
-			Personal* personal = dynamic_cast<Personal*>(usuario);
-			if (dynamic_cast<Lavaplato*>(personal)!=NULL) {
-				cout<<i<<". "<<lista.at(i)->getNombre()<<endl;
-			}
+		//Usuario* usuario= lista.at(i);
+		if (dynamic_cast<Lavaplato*>(lista.at(i))) {
+      cont++;
+
 		}
 	}
-	cin>>opcion;
+
+  if (cont==0) {
+    cout<<"No hay ningun lavaplato aun"<<endl;
+  }else{
+    do {
+  		cout<<"1. Gritarle a un lavaplato "<<endl;
+  		cout<<"2. Motivar a un lavaplato"<<endl;
+  		cin>>ans;
+  	} while(ans<1&&ans>2);
+    cout<<"Escoja el lavaplato"<<endl;
+    for (int i = 0; i < lista.size(); i++) {
+  		Usuario* usuario= lista.at(i);
+  		if (dynamic_cast<Personal*>(usuario)) {
+  			Personal* personal = dynamic_cast<Personal*>(usuario);
+  			if (dynamic_cast<Lavaplato*>(personal)) {
+  				cout<<i<<". "<<lista.at(i)->getNombre()<<endl;
+
+  			}
+  		}
+    }cin>>opcion;
+  }
+
+
 	if (ans==1) {
 		int desmotivacion;
 		cout<<"Ingrese el numero del grito"<<endl;
@@ -490,14 +509,13 @@ vector<Usuario*> menumesero(vector<Usuario*>lista,Usuario* usuario){
 	}
   return lista;
 }
-void escribir(vector<Usuario*>lista){
-  ofstream archivo("Usuario.txt");
+void escribir(Usuario* lista){
+  ofstream archivo("Usuario.txt",std::fstream::in|std::fstream::out|std::fstream::app);
   if (archivo.is_open()) {
-    for (int i = 0; i < lista.size(); i++) {
-      archivo<<lista.at(i)->toString();
-    }
+    archivo<<lista->toString();
+    archivo.close();
   }
-  archivo.close();
+
 }
 vector<Usuario*> leer(){
   vector<Usuario*> lista;
